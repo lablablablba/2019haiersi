@@ -14,6 +14,10 @@
 
 不加任何分隔符的拼接方案，在bert模型上的实现，终究是只取出最后一层隐状态的第一个位置，进行后续处理得到预测的分类。从bert的模型设计而言，该向量表达的是输入序列整体上的分类倾向，而不是一段上下文之中，我们所要的目标句的分类倾向。
 
-为了解决这个问题，我们参考了[Fine-tune BERT for Extractive Summarization](https://arxiv.org/abs/1903.10318)的做法，在每个句子的前后分别添上\[CLS]和\[SEP]标记，然后再进行拼接。在计算分类时，取出目标的\[CLS]对应的向量来计算。相较于test_a+test_b的方法，在dev集上能再提升月0.7%正确率。
+为了解决这个问题，我们参考了[Fine-tune BERT for Extractive Summarization](https://arxiv.org/abs/1903.10318)的做法，在每个句子的前后分别添上\[CLS]和\[SEP]标记，然后再进行拼接。在计算分类时，取出目标的\[CLS]对应的向量来计算。相较于test_a+test_b的方法，在dev集上能再提升约0.7%正确率。
 
-### 
+### 处理过拟合
+
+我们在实验中发现，模型在train数据集上的正确率能非常快速的提升，最终往往能轻易达到97%以上，但在dev集上随epoch增加，提升非常低。同时，我们观察到，相当一部分的错误样例，在错误的分类上有着惊人的、过90%的预测概率。我们认为模型可能存在着过拟合的问题。
+
+我们参考了[Unsupervised Data Augmentation for Consistency Training](https://arxiv.org/abs/1904.12848)的做法。在每一个batch当中，如果一个example能被正确预测，并且预测概率超过了设定阈值，那么在loss回传并更新参数时，这个example就不被纳入计算。这个方法能让模型更多的在划分错误的example上进行学习。在dev集上，使用该技巧后，正确率提升约0.4%。
