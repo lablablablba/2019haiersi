@@ -5,7 +5,7 @@
 
 # 半监督学习
 
-+ 实验过程中我们发现模型在训练集上模型发生了严重拟合，在训练集上的准确率一度达到97%，再加上通过分析错误样例，发现模型容易被个词语所误导，而不是关心整个句子本身，因此我们开始了增加模型泛化性的实验。受到[Unsupervised Data Augmentation](https://github.com/google-research/uda)的启发，我们使用了tsa和vat两项半监督学习技术。
++ 实验过程中我们发现模型在训练集上模型发生了严重拟合，在训练集上的准确率达到97%，加上通过分析错误样例，发现模型容易被个词语所误导，而不是关心整个句子本身，因此我们开始了增加模型泛化性的实验。受到[Unsupervised Data Augmentation](https://github.com/google-research/uda)的启发，我们使用了tsa和vat两项半监督学习技术来增强模型的泛化能力。
 
 + ## VAT
     
