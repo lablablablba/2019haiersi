@@ -42,8 +42,7 @@ class Stacker(object):
     
     def stack(self, clf, split=0.7, reload=True):
         if reload:
-            self.load_data()
-            
+            self.load_data()            
         sep = int(len(self.y_train)*0.7)
         clf.fit(self.X_train[:sep], self.y_train[:sep])
         self.get_result(clf.predict(self.X_train[sep:]), self.y_train[sep:])
