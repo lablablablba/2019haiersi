@@ -105,6 +105,7 @@ def train(model,train_dataloader,args,device,n_gpu,Num_examples):
         for step, batch in enumerate(tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])):
             batch = tuple(t.to(device) for t in batch)
             input_ids, input_mask, segment_ids, label_ids = batch
+            #决定是否使用vat和tsa
             # # define a new function to compute loss values for both output_modes
             logits = model(input_ids, token_type_ids=segment_ids, attention_mask=input_mask)
 
@@ -261,7 +262,7 @@ def main():
 
     model.to(device)
     model = torch.nn.DataParallel(model)
-
+    #获取数据
     all_input_ids, all_input_mask, all_segment_ids, all_label_ids = \
         load_data(processor,args,label_list,tokenizer,output_mode,logger,mode=True)
     test_all_input_ids, test_all_input_mask, test_all_segment_ids, test_all_label_ids = \
@@ -270,7 +271,7 @@ def main():
     test_data = TensorDataset(test_all_input_ids, test_all_input_mask, test_all_segment_ids, test_all_label_ids)
     test_sampler = SequentialSampler(test_data)
     test_dataloader = DataLoader(test_data, sampler=test_sampler, batch_size=args.eval_batch_size)
-
+    #k折验证
     stratified_folder = StratifiedKFold(n_splits=5, random_state=args.seed, shuffle=False)
 
     oof_train = np.zeros((all_label_ids.shape[0],3))
